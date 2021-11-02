@@ -14,8 +14,8 @@ groups:
  - name: "1.2"
    channels:
     - name: alpha
-      version: 1.2.34 # Feature X was implemented
+      version: 1.2.34
     - name: beta
-      version: 1.2.33 # Feature Y was implemented
+      version: 1.2.33
     - name: ea
       version: 1.2.27+fix3

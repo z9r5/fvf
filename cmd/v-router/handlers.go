@@ -52,7 +52,7 @@ func groupHandler(w http.ResponseWriter, r *http.Request) {
 	if version, err := getVersionFromGroup(&ReleasesStatus, vars["group"]); err == nil {
 		w.Header().Set("X-Accel-Redirect", fmt.Sprintf("%s%s/%s/%s", langPrefix, GlobalConfig.LocationVersions, VersionToURL(version), getDocPageURLRelative(r, true)))
 	} else {
-		http.Redirect(w, r, fmt.Sprintf("%s%s/%s/", langPrefix, GlobalConfig.LocationVersions, GlobalConfig.ActiveRelease), 302)
+		http.Redirect(w, r, fmt.Sprintf("%s%s/%s/", langPrefix, GlobalConfig.LocationVersions, GlobalConfig.DefaultGroup), 302)
 	}
 }
 
@@ -164,7 +164,7 @@ func rootDocHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	http.Redirect(w, r, fmt.Sprintf("%s%s/%s/%s", langPrefix, GlobalConfig.LocationVersions, GlobalConfig.ActiveRelease, redirectTo), 301)
+	http.Redirect(w, r, fmt.Sprintf("%s%s/%s/%s", langPrefix, GlobalConfig.LocationVersions, GlobalConfig.DefaultGroup, redirectTo), 301)
 }
 
 // Redirect to root documentation if request not matches any location (override 404 response)

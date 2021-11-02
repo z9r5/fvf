@@ -19,17 +19,19 @@ import (
 )
 
 type GlobalConfigType struct {
-	ActiveRelease    string `default:"v1"`
-	ListenAddress    string `default:"0.0.0.0"`
-	ListenPort       string `default:"8080"`
-	LogLevel         string `default:"warn"`
-	LogFormat        string `default:"text"`
-	PathChannelsFile string `default:"channels.yaml"`
-	PathStatic       string `default:"root"`
-	PathTpls         string `default:"/includes"`
-	LocationVersions string `default:"/documentation"`
-	I18nType         string `default:"domain"`
-	URLValidation    bool   `default:"false"`
+	DefaultGroup     string `default:"v1" split_words:"true"`
+	DefaultChannel   string `default:"stable" split_words:"true"`
+	UseLatestChannel string `default:"false" split_words:"true"`
+	ListenAddress    string `default:"0.0.0.0" split_words:"true"`
+	ListenPort       string `default:"8080" split_words:"true"`
+	LogLevel         string `default:"warn" split_words:"true"`
+	LogFormat        string `default:"text" split_words:"true"`
+	PathChannelsFile string `default:"channels.yaml" split_words:"true"`
+	PathStatic       string `default:"root" split_words:"true"`
+	PathTpls         string `default:"/includes" split_words:"true"`
+	LocationVersions string `default:"/documentation" split_words:"true"`
+	I18nType      string `default:"domain" split_words:"true"`
+	UrlValidation bool   `default:"false" split_words:"true"`
 }
 
 type ChannelType struct {
@@ -114,6 +116,9 @@ func printConfiguration() {
 	log.Infoln(fmt.Sprintf("Templates directory: %s%s", getRootFilesPath(), GlobalConfig.PathTpls))
 	log.Infoln(fmt.Sprintf("URL location for versions: %s", GlobalConfig.LocationVersions))
 	log.Infoln(fmt.Sprintf("Localization method: %s", GlobalConfig.I18nType))
+	log.Infoln(fmt.Sprintf("Default group: %s", GlobalConfig.DefaultGroup))
+	log.Infoln(fmt.Sprintf("Default channel: %s", GlobalConfig.DefaultChannel))
+	log.Infoln(fmt.Sprintf("Use the 'latest' channel: %s", GlobalConfig.UseLatestChannel))
 
 	if log.GetLevel() == log.TraceLevel {
 		channelFileContent, err := ioutil.ReadFile(GlobalConfig.PathChannelsFile)
@@ -158,7 +163,7 @@ func (m *templateDataType) getChannelMenuData(r *http.Request, releases *Release
 	m.CurrentVersion = URLToVersion(m.CurrentVersionURL)
 
 	if m.CurrentVersion == "" {
-		m.CurrentVersion = GlobalConfig.ActiveRelease
+		m.CurrentVersion = GlobalConfig.DefaultGroup
 		m.CurrentVersionURL = VersionToURL(m.CurrentVersion)
 	}
 
@@ -200,7 +205,7 @@ func (m *templateDataType) getVersionMenuData(r *http.Request) (err error) {
 		if res == nil {
 			m.MenuDocumentationLink = ""
 		} else {
-			m.CurrentVersion = GlobalConfig.ActiveRelease
+			m.CurrentVersion = GlobalConfig.DefaultGroup
 			m.CurrentVersionURL = VersionToURL(m.CurrentVersion)
 		}
 	}
@@ -249,7 +254,7 @@ func (m *templateDataType) getGroupMenuData(r *http.Request) (err error) {
 	m.CurrentLang = getCurrentLang(r)
 
 	if m.CurrentVersion == "" {
-		m.CurrentVersion = GlobalConfig.ActiveRelease
+		m.CurrentVersion = GlobalConfig.DefaultGroup
 		m.CurrentVersionURL = VersionToURL(m.CurrentVersion)
 	}
 
@@ -389,7 +394,7 @@ func getRootReleaseVersion() string {
 
 	if len(ReleasesStatus.Groups) > 0 {
 		for _, ReleaseGroup := range ReleasesStatus.Groups {
-			if ReleaseGroup.Name == GlobalConfig.ActiveRelease {
+			if ReleaseGroup.Name == GlobalConfig.DefaultGroup {
 				releaseVersions := make(map[string]string)
 				for _, channel := range ReleaseGroup.Channels {
 					releaseVersions[channel.Name] = channel.Version
@@ -526,7 +531,7 @@ func URLToVersion(version string) (result string) {
 }
 
 func validateURL(url string) (err error) {
-	if ! GlobalConfig.URLValidation {
+	if ! GlobalConfig.UrlValidation {
 		return nil
 	}
 
