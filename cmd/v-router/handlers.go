@@ -52,8 +52,7 @@ func groupHandler(w http.ResponseWriter, r *http.Request) {
 	if version, err := getVersionFromGroup(&ReleasesStatus, vars["group"]); err == nil {
 		w.Header().Set("X-Accel-Redirect", fmt.Sprintf("%s%s/%s/%s", langPrefix, GlobalConfig.LocationVersions, VersionToURL(version), getDocPageURLRelative(r, true)))
 	} else {
-		activeRelease := getRootRelease()
-		http.Redirect(w, r, fmt.Sprintf("%s%s/%s/", langPrefix, GlobalConfig.LocationVersions, activeRelease), 302)
+		http.Redirect(w, r, fmt.Sprintf("%s%s/%s/", langPrefix, GlobalConfig.LocationVersions, GlobalConfig.ActiveRelease), 302)
 	}
 }
 
@@ -149,11 +148,9 @@ func serveFilesHandler(fs http.FileSystem) http.Handler {
 }
 
 func rootDocHandler(w http.ResponseWriter, r *http.Request) {
-	var redirectTo, activeRelease, langPrefix string
+	var redirectTo, langPrefix string
 
 	log.Debugln("Use handler - rootDocHandler")
-
-	activeRelease = getRootRelease()
 
 	vars := mux.Vars(r)
 	if len(vars["lang"]) > 0 {
@@ -167,7 +164,7 @@ func rootDocHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	http.Redirect(w, r, fmt.Sprintf("%s%s/%s/%s", langPrefix, GlobalConfig.LocationVersions, activeRelease, redirectTo), 301)
+	http.Redirect(w, r, fmt.Sprintf("%s%s/%s/%s", langPrefix, GlobalConfig.LocationVersions, GlobalConfig.ActiveRelease, redirectTo), 301)
 }
 
 // Redirect to root documentation if request not matches any location (override 404 response)

@@ -19,6 +19,7 @@ import (
 )
 
 type GlobalConfigType struct {
+	ActiveRelease    string `default:"v1"`
 	ListenAddress    string `default:"0.0.0.0"`
 	ListenPort       string `default:"8080"`
 	LogLevel         string `default:"warn"`
@@ -157,7 +158,7 @@ func (m *templateDataType) getChannelMenuData(r *http.Request, releases *Release
 	m.CurrentVersion = URLToVersion(m.CurrentVersionURL)
 
 	if m.CurrentVersion == "" {
-		m.CurrentVersion = getRootRelease()
+		m.CurrentVersion = GlobalConfig.ActiveRelease
 		m.CurrentVersionURL = VersionToURL(m.CurrentVersion)
 	}
 
@@ -199,7 +200,7 @@ func (m *templateDataType) getVersionMenuData(r *http.Request) (err error) {
 		if res == nil {
 			m.MenuDocumentationLink = ""
 		} else {
-			m.CurrentVersion = getRootRelease()
+			m.CurrentVersion = GlobalConfig.ActiveRelease
 			m.CurrentVersionURL = VersionToURL(m.CurrentVersion)
 		}
 	}
@@ -248,7 +249,7 @@ func (m *templateDataType) getGroupMenuData(r *http.Request) (err error) {
 	m.CurrentLang = getCurrentLang(r)
 
 	if m.CurrentVersion == "" {
-		m.CurrentVersion = getRootRelease()
+		m.CurrentVersion = GlobalConfig.ActiveRelease
 		m.CurrentVersionURL = VersionToURL(m.CurrentVersion)
 	}
 
@@ -384,13 +385,11 @@ func getVersionFromGroup(releases *ReleasesStatusType, group string) (version st
 }
 
 func getRootReleaseVersion() string {
-	activeRelease := getRootRelease()
-
 	_ = updateReleasesStatus()
 
 	if len(ReleasesStatus.Groups) > 0 {
 		for _, ReleaseGroup := range ReleasesStatus.Groups {
-			if ReleaseGroup.Name == activeRelease {
+			if ReleaseGroup.Name == GlobalConfig.ActiveRelease {
 				releaseVersions := make(map[string]string)
 				for _, channel := range ReleaseGroup.Channels {
 					releaseVersions[channel.Name] = channel.Version
