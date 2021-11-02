@@ -15,7 +15,7 @@ import (
 var GlobalConfig GlobalConfigType
 
 func newRouter() *mux.Router {
-	var langPrefix string
+	var langPrefix, channelList string
 	r := mux.NewRouter()
 
 	staticFileDirectory := http.Dir(getRootFilesPath())
@@ -24,10 +24,16 @@ func newRouter() *mux.Router {
 		langPrefix = "/{lang:ru|en}"
 	}
 
+    channelList = "alpha|beta|ea|early-access|stable|rock-solid"
+	if GlobalConfig.UseLatestChannel {
+		channelList = "latest|" + channelList
+	}
+
 	r.PathPrefix("/status").HandlerFunc(statusHandler)
 	r.PathPrefix("/health").HandlerFunc(healthCheckHandler)
 
-	r.PathPrefix(fmt.Sprintf("%s%s/{group:v[0-9]+.[0-9]+}-{channel:alpha|beta|ea|stable|rock-solid}/", langPrefix, GlobalConfig.LocationVersions)).HandlerFunc(groupChannelHandler)
+	r.PathPrefix(fmt.Sprintf("%s%s/{group:v[0-9]+.[0-9]+}-{channel:%s}/", langPrefix, GlobalConfig.LocationVersions, channelList)).HandlerFunc(groupChannelHandler)
+	r.PathPrefix(fmt.Sprintf("%s%s/{group:v[0-9]+}-{channel:%s}/", langPrefix, GlobalConfig.LocationVersions, channelList)).HandlerFunc(groupChannelHandler)
 	r.PathPrefix(fmt.Sprintf("%s%s/{group:v[0-9]+}/", langPrefix, GlobalConfig.LocationVersions)).HandlerFunc(groupHandler)
 	r.PathPrefix(fmt.Sprintf("%s%s/", langPrefix, GlobalConfig.LocationVersions)).HandlerFunc(rootDocHandler)
 	r.PathPrefix(fmt.Sprintf("%s%s/", langPrefix, GlobalConfig.PathTpls)).HandlerFunc(templateHandler)

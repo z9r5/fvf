@@ -19,19 +19,19 @@ import (
 )
 
 type GlobalConfigType struct {
-	DefaultGroup     string `default:"v1" split_words:"true"`
-	DefaultChannel   string `default:"stable" split_words:"true"`
-	UseLatestChannel string `default:"false" split_words:"true"`
-	ListenAddress    string `default:"0.0.0.0" split_words:"true"`
-	ListenPort       string `default:"8080" split_words:"true"`
-	LogLevel         string `default:"warn" split_words:"true"`
-	LogFormat        string `default:"text" split_words:"true"`
-	PathChannelsFile string `default:"channels.yaml" split_words:"true"`
-	PathStatic       string `default:"root" split_words:"true"`
-	PathTpls         string `default:"/includes" split_words:"true"`
-	LocationVersions string `default:"/documentation" split_words:"true"`
-	I18nType      string `default:"domain" split_words:"true"`
-	UrlValidation bool   `default:"false" split_words:"true"`
+    DefaultGroup     string `default:"v1" split_words:"true"`
+    DefaultChannel   string `default:"stable" split_words:"true"`
+    UseLatestChannel bool   `default:"false" split_words:"true"`
+    ListenAddress    string `default:"0.0.0.0" split_words:"true"`
+    ListenPort       string `default:"8080" split_words:"true"`
+    LogLevel         string `default:"warn" split_words:"true"`
+    LogFormat        string `default:"text" split_words:"true"`
+    PathChannelsFile string `default:"channels.yaml" split_words:"true"`
+    PathStatic       string `default:"root" split_words:"true"`
+    PathTpls         string `default:"/includes" split_words:"true"`
+    LocationVersions string `default:"/documentation" split_words:"true"`
+    I18nType         string `default:"domain" split_words:"true"`
+    UrlValidation    bool   `default:"false" split_words:"true"`
 }
 
 type ChannelType struct {
